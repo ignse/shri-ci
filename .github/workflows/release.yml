@@ -11,6 +11,8 @@ jobs:
     needs: [test]
     runs-on: ubuntu-latest
     steps:
+      - name: Set env
+        run: echo "RELEASE_VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
       - name: Checkout code
         uses: actions/checkout@v2
         with:
@@ -35,6 +37,8 @@ jobs:
 
       - name: Add information to the tracker
         uses: fjogeleit/http-request-action@master
+        env:
+          RELEASE_DESCRIPTION: "Release ${{ env.RELEASE_VERSION }} has been made.\nRelease created by: ${{github.actor}}\n\nChangelog:\n ${{steps.Changelog.outputs.changelog}}"
         with:
           url: "https://api.tracker.yandex.net/v2/issues/"
           method: "POST"
@@ -42,11 +46,8 @@ jobs:
           customHeaders: '{"Authorization": "OAuth ${{ secrets.TRACKER_TOKEN }}", "X-Org-ID": "${{ secrets.TRACKER_ORG_ID }}"}'
           data: '{
             "queue": {"key": "TMP"},
-            "summary": "$Release ${{ github.event.release.tag_name }} ",
-            "description": "
-              Release ${{ github.event.release.tag_name }} has been made.<br>
-              Release created by: ${{github.actor}}<br>
-              Changelog:<br> ${{steps.Changelog.outputs.changelog}}"
+            "summary": "$Release ${{ env.RELEASE_VERSION }} ",
+            "description": "${{ toJson(env.RELEASE_DESCRIPTION) }}"
           }'
   test:
     runs-on: ubuntu-latest
