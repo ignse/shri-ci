@@ -38,7 +38,7 @@ jobs:
       - name: Add information to the tracker
         uses: fjogeleit/http-request-action@master
         env:
-          RELEASE_DESCRIPTION: "Release ${{ env.RELEASE_VERSION }} has been made.\nRelease created by: ${{github.actor}}\n\nChangelog:\n ${{steps.Changelog.outputs.changelog}}\n((http://ya.ru test))"
+          RELEASE_DESCRIPTION: "((${{ github.server_url }}/${{github.repository}}/releases/tag/${{ env.RELEASE_VERSION }} Release ${{ env.RELEASE_VERSION }})) has been made.\nRelease created by: ${{github.actor}}\n\nChangelog:\n ${{steps.Changelog.outputs.changelog}}\n\n Tests successfully done. ((${{ github.server_url }}/${{github.repository}}/runs/${{ github.run_id }}?check_suite_focus=true#step:5:8 see log))"
         with:
           url: "https://api.tracker.yandex.net/v2/issues/"
           method: "POST"
@@ -46,7 +46,7 @@ jobs:
           customHeaders: '{"Authorization": "OAuth ${{ secrets.TRACKER_TOKEN }}", "X-Org-ID": "${{ secrets.TRACKER_ORG_ID }}"}'
           data: '{
             "queue": {"key": "TMP"},
-            "summary": "$Release ${{ env.RELEASE_VERSION }} ",
+            "summary": "Release ${{ env.RELEASE_VERSION }} ",
             "description": ${{ toJson(env.RELEASE_DESCRIPTION) }}
           }'
   test:
