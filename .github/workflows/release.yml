@@ -42,12 +42,11 @@ jobs:
           customHeaders: '{"Authorization": "OAuth ${{ secrets.TRACKER_TOKEN }}", "X-Org-ID": "${{ secrets.TRACKER_ORG_ID }}"}'
           data: '{
             "queue": {"key": "TMP"},
-            "summary": "$Release ${{ github.ref }}",
+            "summary": "$Release ${{ github.event.release.tag_name }} ",
             "description": "
-              Release ${{ github.ref }} has been made.\\n
-              Release created by: ${{github.actor}}\\n
-              Changelog:\\n ${{steps.Changelog.outputs.changelog}}
-              ${{ env.TEST_DESC }}"
+              Release ${{ github.event.release.tag_name }} has been made.<br>
+              Release created by: ${{github.actor}}<br>
+              Changelog:<br> ${{steps.Changelog.outputs.changelog}}"
           }'
   test:
     runs-on: ubuntu-latest
@@ -58,4 +57,3 @@ jobs:
           node-version: '^16.11.1'
       - run: npm i
       - run: npm test
-      - run: echo TEST_DESC="Tests have been completed\\n" >> $GITHUB_ENV
