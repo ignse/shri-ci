@@ -38,7 +38,7 @@ jobs:
       - name: Add information to the tracker
         uses: fjogeleit/http-request-action@master
         env:
-          RELEASE_DESCRIPTION: "Release ${{ env.RELEASE_VERSION }} has been made.\nRelease created by: ${{github.actor}}\n\nChangelog:\n ${{steps.Changelog.outputs.changelog}}"
+          RELEASE_DESCRIPTION: "Release ${{ env.RELEASE_VERSION }} has been made.\nRelease created by: ${{github.actor}}\n\nChangelog:\n ${{steps.Changelog.outputs.changelog}}\n((http://ya.ru test))"
         with:
           url: "https://api.tracker.yandex.net/v2/issues/"
           method: "POST"
@@ -47,7 +47,7 @@ jobs:
           data: '{
             "queue": {"key": "TMP"},
             "summary": "$Release ${{ env.RELEASE_VERSION }} ",
-            "description": "${{ toJson(env.RELEASE_DESCRIPTION) }}"
+            "description": ${{ toJson(env.RELEASE_DESCRIPTION) }}
           }'
   test:
     runs-on: ubuntu-latest
