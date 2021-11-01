@@ -38,7 +38,7 @@ jobs:
       - name: Add information to the tracker
         uses: fjogeleit/http-request-action@master
         env:
-          RELEASE_DESCRIPTION: "((${{ github.server_url }}/${{github.repository}}/releases/tag/${{ env.RELEASE_VERSION }} Release ${{ env.RELEASE_VERSION }})) has been made.\nRelease created by: ${{github.actor}}\n\nChangelog:\n ${{steps.Changelog.outputs.changelog}}\n\n Tests successfully done. ((${{ github.server_url }}/${{github.repository}}/runs/${{ github.run_id }}?check_suite_focus=true#step:5:8 see log))\n ${{ steps.docker_build.outputs.digest }} \n ${{ steps.tests.outputs }}"
+          RELEASE_DESCRIPTION: "((${{ github.server_url }}/${{github.repository}}/releases/tag/${{ env.RELEASE_VERSION }} Release ${{ env.RELEASE_VERSION }})) has been made.\nRelease created by: ${{github.actor}}\n\nBuild Docker Image: ${{ env.RELEASE_VERSION }}_docker_img \n\nChangelog:\n ${{steps.Changelog.outputs.changelog}}\n\n Tests successfully done. ((${{ github.server_url }}/${{github.repository}}/runs/${{ env.TEST_RUN_ID }}?check_suite_focus=true#step:5:8 see log))"
         with:
           url: "https://api.tracker.yandex.net/v2/issues/"
           method: "POST"
@@ -59,6 +59,8 @@ jobs:
       - run: npm i
       - name: Run tests
         id: tests
+        env:
+         TEST_RUN_ID: "${{ github.run_id }}"
         run: npm test
   docker:
     runs-on: ubuntu-latest
